@@ -74,6 +74,7 @@ type
     procedure Ayuda2Click(Sender: TObject);
     procedure Ayuda3Click(Sender: TObject);
     procedure Ayuda4Click(Sender: TObject);
+    procedure Nuevo1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -115,8 +116,8 @@ var
   //Coordenadas del crosser
   x1,y1,x2,y2 : Integer;
   //Listas
-  ListaFibras : array[1..100,1..2] of Tpoint;
-  ListaCables : array[1..100,1..2] of Tpoint;
+  ListaFibras : array[1..100,1..2] of TPoint;
+  ListaCables : array[1..100,1..2] of TPoint;
   ListaFirewalls : array[1..50] of TFirewall;
   ListaServers : array[1..50] of TServer;
   ListaSwitchs : array[1..50] of TSwitch;
@@ -125,12 +126,14 @@ var
 
   //Contadores
   angulo : Real;
-  NumCable, NumFirewall, NumServer, NumSwitch, NumPc, NumImpr, NumFibra: Integer;
+  NumFibra, NumCable, NumFirewall, NumServer, NumSwitch, NumPc, NumImpre: Integer;
 
 implementation
 
 {$R *.dfm}
-
+//
+//Constructor
+//
 procedure TEditorRedes.FormCreate(Sender: TObject);
 var i : Integer;
 begin
@@ -141,7 +144,7 @@ begin
   NumServer := 0;
   NumSwitch := 0;
   NumPc := 0;
-  NumImpr := 0;
+  NumImpre := 0;
   //Inicio del angulo, defauld = 0
   angulo := 0;
   //Pinta el Lienzo
@@ -164,12 +167,16 @@ begin
   ComboBox1.Items.Add('180 Grados');
   ComboBox1.Items.Add('270 Grados');
 end;
-
+//
+//Boton Salir
+//
 procedure TEditorRedes.Button7Click(Sender: TObject);
 begin
   close();
 end;
-
+//
+//Boton Autor
+//
 procedure TEditorRedes.Button6Click(Sender: TObject);
 begin
   ShowMessage('Paulo Cesar Ruiz Lozano');
@@ -220,6 +227,7 @@ end;
 procedure TEditorRedes.LienzoMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var delta,i : Integer;
+//var aux1,aux2: Integer;
 begin
     //Calculo del punto 20 mas cercano
     //Coordenadas X
@@ -246,38 +254,57 @@ begin
     begin
       Edit2.Text := '('+IntToStr(x2)+','+IntToStr(y2)+')'
     end;
+    //
+    //Elimina
+    //
     if Lienzo.Cursor = crNoDrop then
     begin
       Edit2.Text := 'Borra';
-    end;
-    //Elimina
-    if Lienzo.Cursor = crNoDrop then
-    begin
+
       Lienzo.Canvas.Brush.Color := clWhite;
+      Lienzo.Canvas.Pen.color := clWhite;
       Lienzo.Canvas.Rectangle(x1,y1,x2,y2);
-      Lienzo.Canvas.Pen.color := clgray;
+      Lienzo.Canvas.Pen.color := clGray;
       //Pinta un rectangulo pequeño donde se va a repitan la maya
-      for i:=1 to Round((x1+x2)/20) do
+      //X
+      i := y1;
+      while i <= y2 do
       begin
-      Lienzo.canvas.MoveTo(x1,i*20);
-      Lienzo.Canvas.LineTo(x2,i*20);
+        Lienzo.canvas.MoveTo(x1,i);
+        Lienzo.Canvas.LineTo(x2,i);
+        i := i + 20;
       end;
-      for i:=1 to Round((y1+y2)/20) do
+      //
+      i := x1;
+      while i <= x2 do
       begin
-        Lienzo.canvas.MoveTo(x1+i*20,y1);
-        Lienzo.Canvas.LineTo(x1+i*20,y2);
+        Lienzo.canvas.MoveTo(i,y1);
+        Lienzo.Canvas.LineTo(i,y2);
+        i := i + 20;
       end;
+
+
+      Lienzo.Canvas.Brush.Color := clWhite;
+      Lienzo.Canvas.Pen.Color := clBlack;
     end;
 end;
 
 procedure TEditorRedes.Button1Click(Sender: TObject);
 begin
-  Lienzo.Canvas.Pen.Color:=clgreen;
-  Lienzo.Canvas.pen.Width:=5;
+  //Color de fibra
+  Lienzo.Canvas.Pen.Color := clgreen;
+  Lienzo.Canvas.pen.Width := 5;
+  //Pintar
   Lienzo.Canvas.MoveTo(x1,y1);
   Lienzo.Canvas.lineto(x2,y2);
-  Lienzo.Canvas.Pen.Color:=clblack;
-  Lienzo.Canvas.pen.Width:=1;
+
+  //Agregrar la fibra al arreglo
+  ListaFibras[NumFibra][1] := Point(x1,y1);
+  ListaFibras[NumFibra][2] := Point(x2,y2);
+  NumFibra := NumFibra + 1;
+  //Default
+  Lienzo.Canvas.Pen.Color := clblack;
+  Lienzo.Canvas.pen.Width := 1;
 end;
 
 procedure TEditorRedes.Borrar1Click(Sender: TObject);
@@ -299,7 +326,7 @@ begin
   NumServer := 0;
   NumSwitch := 0;
   NumPc := 0;
-  NumImpr := 0;
+  NumImpre := 0;
   //Reestablece de defaul el angulo
   angulo := 0;
   //Pinta el Lienzo
@@ -320,12 +347,20 @@ end;
 
 procedure TEditorRedes.Guardar1Click(Sender: TObject);
 begin
-  SaveDialog1.Execute;
+  //Guardar Archivo
+  if(SaveDialog1.Execute) then
+  begin
+    coordenadasTexto.Text := SaveDialog1.FileName;
+  end;
 end;
 
 procedure TEditorRedes.Abrir1Click(Sender: TObject);
 begin
-  OpenDialog1.Execute;
+  //Abrir Archivo
+  if(OpenDialog1.Execute) then
+  begin
+    coordenadasTexto.Text := OpenDialog1.FileName;
+  end;
 end;
 
 procedure TEditorRedes.Button2Click(Sender: TObject);
@@ -333,20 +368,34 @@ begin
   //Pinta linea negra = cable
   Lienzo.Canvas.Pen.Color := clBlack;
   Lienzo.Canvas.pen.Width := 3;
+
   Lienzo.Canvas.MoveTo(x1,y1);
   Lienzo.Canvas.lineto(x2,y2);
+
+  ListaCables[NumCable][1] := Point(x1,y1);
+  ListaCables[NumCable][2] := Point(x2,y2);
+  NumCable := NumCable + 1;
+  //Default
   Lienzo.Canvas.Pen.Color := clblack;
   Lienzo.Canvas.pen.Width := 1;
 end;
 
 procedure TEditorRedes.Button5Click(Sender: TObject);
 var Firewall : TBitmap;
+var contador : TFirewall;
 begin
   Firewall := TBitmap.Create;
   Firewall.LoadFromFile('FirewallIcon.bmp');
   if Lienzo.Cursor = crCross then
   begin
+    //Pinta
     Lienzo.Canvas.Draw(x1,y1,Firewall);
+    //Guardar
+    contador.CordX := x1;
+    contador.CordY := y1;
+    ListaFirewalls[NumFirewall] := contador;
+    NumFirewall := NumFirewall +1;
+
   end;
 end;
 //
@@ -382,28 +431,41 @@ end;
 
 procedure TEditorRedes.Button3Click(Sender: TObject);
 var Server : TBitmap;
+var contador : TServer;
 begin
   Server := TBitmap.Create;
   Server.LoadFromFile('ServerIcon.bmp');
   if Lienzo.Cursor = crCross then
   begin
     Lienzo.Canvas.Draw(x1,y1,Server);
+    //Guardar
+    contador.CordX := x1;
+    contador.CordY := y1;
+    ListaServers[NumServer] := contador;
+    NumServer := NumServer +1;
   end;
 end;
 
 procedure TEditorRedes.Button11Click(Sender: TObject);
 var Switch : TBitmap;
+var contador : TSwitch;
 begin
   Switch := TBitmap.Create;
   Switch.LoadFromFile('SwitchIcon.bmp');
   if Lienzo.Cursor = crCross then
   begin
     Lienzo.Canvas.Draw(x1,y1,Switch);
+    //Guardar
+    contador.CordX := x1;
+    contador.CordY := y1;
+    ListaSwitchs[NumSwitch] := contador;
+    NumSwitch := NumSwitch + 1;
   end;
 end;
 
 procedure TEditorRedes.Button4Click(Sender: TObject);
 var Computadora : TBitmap;
+var contador : TPc;
 begin
   Computadora := TBitmap.Create;
 
@@ -412,25 +474,35 @@ begin
     if angulo = 0 then
     begin
       Computadora.LoadFromFile('PCIcon.bmp');
+      contador.angulo := 0;
     end;
     if angulo = 90 then
     begin
       Computadora.LoadFromFile('PCIcon90.bmp');
+      contador.angulo := 90;
     end;
     if angulo = 180 then
     begin
       Computadora.LoadFromFile('PCIcon180.bmp');
+      contador.angulo := 180;
     end;
     if angulo = 270 then
     begin
       Computadora.LoadFromFile('PCIcon270.bmp');
+      contador.angulo := 270;
     end;
     Lienzo.Canvas.Draw(x1,y1,Computadora);
+    //Guardar
+    contador.CordX := x1;
+    contador.CordY := y1;
+    ListaPcs[NumPc] := contador;
+    NumPc := NumPc + 1;
   end;
 end;
 
 procedure TEditorRedes.Button9Click(Sender: TObject);
 var Impresora : TBitmap;
+var contador : TPrinter;
 begin
   Impresora := TBitmap.Create;
   if Lienzo.Cursor = crCross then
@@ -438,20 +510,29 @@ begin
     if angulo = 0 then
     begin
       Impresora.LoadFromFile('PrinterIcon.bmp');
+      contador.angulo := 0;
     end;
     if angulo = 90 then
     begin
       Impresora.LoadFromFile('PrinterIcon90.bmp');
+      contador.angulo := 90;
     end;
     if angulo = 180 then
     begin
       Impresora.LoadFromFile('PrinterIcon180.bmp');
+      contador.angulo := 180;
     end;
     if angulo = 270 then
     begin
       Impresora.LoadFromFile('PrinterIcon270.bmp');
+      contador.angulo := 270;
     end;
     Lienzo.Canvas.Draw(x1,y1,Impresora);
+    //Guardar
+    contador.CordX := x1;
+    contador.CordY := y1;
+    ListaImpre[NumImpre] := contador;
+    NumImpre := NumImpre + 1;
   end;
 end;
 
@@ -474,7 +555,7 @@ begin
   NumServer := 0;
   NumSwitch := 0;
   NumPc := 0;
-  NumImpr := 0;
+  NumImpre := 0;
   //Reestablece de defaul el angulo
   angulo := 0;
   //Pinta el Lienzo
@@ -519,6 +600,37 @@ end;
 procedure TEditorRedes.Ayuda4Click(Sender: TObject);
 begin
   ShowMessage('Coordenadas donde se soltó el click');
+end;
+
+procedure TEditorRedes.Nuevo1Click(Sender: TObject);
+var i : Integer;
+begin
+  //Reestablece el mouse
+  Lienzo.Cursor := crCross;
+  //Reestablece los contadores
+  Numfibra := 0;
+  NumCable := 0;
+  NumFirewall := 0;
+  NumServer := 0;
+  NumSwitch := 0;
+  NumPc := 0;
+  NumImpre := 0;
+  //Reestablece de defaul el angulo
+  angulo := 0;
+  //Pinta el Lienzo
+  Lienzo.Canvas.Rectangle(0,0,2000,2000);
+  //Punta maya
+  Lienzo.Canvas.Pen.color:=clgray;
+  for i := 1 to 100 do
+  begin
+    Lienzo.canvas.MoveTo(0,i*20);
+    Lienzo.Canvas.LineTo(2000,i*20);
+  end;
+  for i := 1 to 100 do
+  begin
+     Lienzo.canvas.MoveTo(i*20,0);
+     Lienzo.Canvas.LineTo(i*20,2000);
+  end;
 end;
 
 end.

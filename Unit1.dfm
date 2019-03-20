@@ -1,6 +1,6 @@
 object EditorRedes: TEditorRedes
-  Left = 132
-  Top = 132
+  Left = 146
+  Top = 98
   Width = 1324
   Height = 709
   Caption = 'EditorRedes'
@@ -163,7 +163,7 @@ object EditorRedes: TEditorRedes
       OnClick = Button6Click
     end
     object Button7: TButton
-      Left = 136
+      Left = 128
       Top = 600
       Width = 75
       Height = 25
@@ -290,6 +290,7 @@ object EditorRedes: TEditorRedes
       end
       object Nuevo1: TMenuItem
         Caption = 'Nuevo'
+        OnClick = Nuevo1Click
       end
     end
     object Editar1: TMenuItem
