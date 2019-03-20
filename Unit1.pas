@@ -355,11 +355,21 @@ begin
 end;
 
 procedure TEditorRedes.Abrir1Click(Sender: TObject);
+var x,y: Integer;
 begin
   //Abrir Archivo
   if(OpenDialog1.Execute) then
   begin
-    coordenadasTexto.Text := OpenDialog1.FileName;
+    //Cargar arvhivos en Pascal
+    AssignFile(f,OpenDialog1.FileName);
+    //Fopen
+    Reset(f);//fopen
+    while not EOF(f) do //Mientras no llegue al final del archivo
+    begin
+      //inicio
+      readln(f,x,y);//Lee lineas
+    end;
+    CloseFile(f);//Cerrar El archivo
   end;
 end;
 
