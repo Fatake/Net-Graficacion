@@ -23,10 +23,8 @@ implementation
 {$R *.dfm}
 
 procedure TEditor.Button1Click(Sender: TObject);
-var Computadora : TBitmap;
 begin
-  Computadora := TBitmap.Create;
-  Computadora.LoadFromFile('/img/pc.bmp');
+  
 end;
 
 end.

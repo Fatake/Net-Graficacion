@@ -1,6 +1,6 @@
 object EditorRedes: TEditorRedes
-  Left = 146
-  Top = 106
+  Left = 178
+  Top = 162
   Width = 1324
   Height = 709
   Caption = 'EditorRedes'
@@ -308,6 +308,15 @@ object EditorRedes: TEditorRedes
         OnClick = BorrarTodo1Click
       end
     end
+    object Ayuda5: TMenuItem
+      Caption = 'Ayuda'
+      object Infor1: TMenuItem
+        Caption = 'Infor'
+      end
+      object Help1: TMenuItem
+        Caption = 'Help'
+      end
+    end
   end
   object SaveDialog1: TSaveDialog
     Filter = '*.edp|*.edp|.edp|.edp'
@@ -317,6 +326,6 @@ object EditorRedes: TEditorRedes
   object OpenDialog1: TOpenDialog
     Filter = '*.edp|*.edp|.edp|.edp'
     Left = 8
-    Top = 72
+    Top = 80
   end
 end

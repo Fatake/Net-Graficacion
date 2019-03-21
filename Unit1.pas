@@ -45,6 +45,9 @@ type
     Ayuda2: TLabel;
     Ayuda3: TLabel;
     Ayuda4: TLabel;
+    Ayuda5: TMenuItem;
+    Infor1: TMenuItem;
+    Help1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure Button7Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
@@ -124,6 +127,11 @@ var
   ListaPcs : array[1..50] of TPc;
   ListaImpre : array[1..50] of TPrinter;
 
+  Firewall : TBitmap;
+  Server : TBitmap;
+  Switch : TBitmap;
+  Computadora : TBitmap;
+  Impresora : TBitmap;
   //Contadores
   angulo : Real;
   NumFibra, NumCable, NumFirewall, NumServer, NumSwitch, NumPc, NumImpre: Integer;
@@ -145,6 +153,15 @@ begin
   NumSwitch := 0;
   NumPc := 0;
   NumImpre := 0;
+  //Inicio de Imagenes
+  Firewall := TBitmap.Create;
+  Firewall.LoadFromFile('FirewallIcon.bmp');
+  Server := TBitmap.Create;
+  Server.LoadFromFile('ServerIcon.bmp');
+  Switch := TBitmap.Create;
+  Switch.LoadFromFile('SwitchIcon.bmp');
+  Computadora := TBitmap.Create;
+  Impresora := TBitmap.Create;
   //Inicio del angulo, defauld = 0
   angulo := 0;
   //Pinta el Lienzo
@@ -458,8 +475,8 @@ begin
   Lienzo.Canvas.lineto(x2,y2);
 
   //Agregrar la fibra al arreglo
-  ListaFibras[NumFibra][1] := Point(x1,y1);
-  ListaFibras[NumFibra][2] := Point(x2,y2);
+  ListaFibras[NumFibra+1][1] := Point(x1,y1);
+  ListaFibras[NumFibra+1][2] := Point(x2,y2);
   NumFibra := NumFibra + 1;
   //Default
   Lienzo.Canvas.Pen.Color := clblack;
@@ -518,8 +535,6 @@ begin
     Rewrite(f);//Forma de leectura
     (*
     Donde
-    n = no hay elementos de ese objeto
-    - = Siguientes datos
     f = fibras
     c = cables
     w = Firewalls
@@ -527,96 +542,89 @@ begin
     h = Switch
     p = Pc
     i = impresora
-    a = angulo
+    k = fin de archivo
     *)
 
     //Fibras
-    writeLn(f,'f' );
-    if NumFibra <> 0 then
+    if NumFibra > 0 then
+    begin
       for i := 1 to NumFibra do
       begin
+        writeLn(f,'f' );
         writeLn(f,ListaFibras[i][1].X);
         writeLn(f,ListaFibras[i][1].Y);
         writeLn(f,ListaFibras[i][2].X);
         writeLn(f,ListaFibras[i][2].Y);
-        writeLn(f, '-');
-      end
-    else
-      writeLn(f, 'n');
+      end;
+    end;
     //Cables
-    writeLn(f,'c' );
-    if NumCable <> 0 then
+    if NumCable > 0 then
+    begin
       for i := 1 to NumCable do
       begin
+        writeLn(f,'c' );
         writeLn(f,ListaCables[i][1].X);
         writeLn(f,ListaCables[i][1].Y);
         writeLn(f,ListaCables[i][2].X);
         writeLn(f,ListaCables[i][2].Y);
-        writeLn(f, '-');
-      end
-    else
-      writeLn(f, 'n');
+      end;
+    end;
     //
     //Firewalls
-    writeLn(f,'w' );
-    if NumFirewall <> 0 then
+    if NumFirewall > 0 then
+    begin
       for i := 1 to NumFirewall do
       begin
+        writeLn(f,'w' );
         writeLn(f,ListaFirewalls[i].CordX);
         writeLn(f,ListaFirewalls[i].CordY);
-        writeLn(f, '-');
-      end
-    else
-      writeLn(f, 'n');
+      end;
+    end;
     //Servers
-    writeLn(f,'s' );
-    if NumServer <> 0 then
+    if NumServer > 0 then
+    begin
       for i := 1 to NumServer do
       begin
+        writeLn(f,'s' );
         writeLn(f,ListaServers[i].CordX);
         writeLn(f,ListaServers[i].CordY);
-        writeLn(f, '-');
-      end
-    else
-      writeLn(f, 'n');
+      end;
+    end;
     //Switchs
-    writeLn(f,'h' );
-    if NumSwitch <> 0 then
+    if NumSwitch > 0 then
+    begin
       for i := 1 to NumSwitch do
       begin
+        writeLn(f,'h' );
         writeLn(f,ListaSwitchs[i].CordX);
         writeLn(f,ListaSwitchs[i].CordY);
-        writeLn(f, '-');
-      end
-    else
-      writeLn(f, 'n');
+      end;
+    end;
     //Pcs
-    writeLn(f,'p' );
-    if NumPc <> 0 then
+
+    if NumPc > 0 then
+    begin
       for i := 1 to NumPc do
       begin
+        writeLn(f,'p' );
         writeLn(f,ListaPcs[i].CordX);
         writeLn(f,ListaPcs[i].CordY);
-        writeLn(f,'a');
         writeLn(f,ListaPcs[i].angulo);
-        writeLn(f, '-');
-      end
-    else
-      writeLn(f, 'n');
+      end;
+    end;
     //Impresoras
-    writeLn(f,'i' );
-    if NumImpre <> 0 then
+
+    if NumImpre > 0 then
+    begin
       for i := 1 to NumImpre do
       begin
+        writeLn(f,'i' );
         writeLn(f,ListaImpre[i].CordX);
         writeLn(f,ListaImpre[i].CordY);
-        writeLn(f,'a');
         writeLn(f,ListaImpre[i].angulo);
-        writeLn(f, '-');
-      end
-    else
-      writeLn(f, 'n');
-
+      end;
+    end;
+    writeLn(f,'k');
 
     //Cerrar El archivo
     CloseFile(f);
@@ -624,9 +632,28 @@ begin
 end;
 
 procedure TEditorRedes.Abrir1Click(Sender: TObject);
-var x,y: Integer;
+var aux,tipo: String;
+var xa,ya,xb,yb: Integer;
+var conP : TPc;
+var conI : TPrinter;
+var conH : TSwitch;
+var conW : TFirewall;
+var conS : TServer;
 var  f: TextFile;
 begin
+  (*
+  Donde
+  f = fibras
+  c = cables
+  w = Firewalls
+  s = server
+  h = Switch
+  p = Pc
+  i = impresora
+  k = fin de archivo
+  *)
+  aux := 'l';
+  tipo := 'l';
   //Abrir Archivo
   if(OpenDialog1.Execute) then
   begin
@@ -636,10 +663,189 @@ begin
     Reset(f);//fopen
     while not EOF(f) do //Mientras no llegue al final del archivo
     begin
-      //inicio
-      readln(f,x,y);//Lee lineas
-      Edit2.Text := IntToStr(x);
-      Edit1.Text := IntToStr(y);
+      //Lee Linea
+      readln(f,aux);
+      if(CompareText(aux,'f') = 0)then//Busca Fibras
+      begin
+        tipo := 'f';
+      end;
+      if(CompareText(aux,'c') = 0)then//Busca Cables
+      begin
+        tipo := 'c';
+      end;
+      if(CompareText(aux,'w') = 0)then//Busca Firewalls
+      begin
+        tipo := 'w';
+      end;
+      if(CompareText(aux,'s') = 0)then//Busca Servidores
+      begin
+        tipo := 's';
+      end;
+      if(CompareText(aux,'h') = 0)then//Busca Switches
+      begin
+        tipo := 'h';
+      end;
+      if(CompareText(aux,'p') = 0)then//Busca Pcs
+      begin
+        tipo := 'p';
+      end;
+      if(CompareText(aux,'i') = 0)then//Busca Impresoras
+      begin
+        tipo := 'i';
+      end;
+      if(CompareText(aux,'k') = 0)then//Busca Fin de archivo
+      begin
+        tipo := 'l';
+      end;
+      //Llena
+      if(CompareText(tipo,'l') <> 0)then
+      begin
+        if(CompareText(tipo,'f') = 0) then
+        begin
+          readln(f,xa);
+          readln(f,ya);
+          readln(f,xb);
+          readln(f,yb);
+
+          Lienzo.Canvas.Pen.Color := clgreen;
+          Lienzo.Canvas.pen.Width := 5;
+          //Pintar
+          Lienzo.Canvas.MoveTo(xa,ya);
+          Lienzo.Canvas.lineto(xb,yb);
+
+          //Agregrar la fibra al arreglo
+          ListaFibras[NumFibra+1][1] := Point(xa,ya);
+          ListaFibras[NumFibra+1][2] := Point(xb,yb);
+          NumFibra := NumFibra + 1;
+          //Default
+          Lienzo.Canvas.Pen.Color := clblack;
+          Lienzo.Canvas.pen.Width := 1;
+        end;
+        if(CompareText(tipo,'c') = 0) then
+        begin
+          readln(f,xa);
+          readln(f,ya);
+          readln(f,xb);
+          readln(f,yb);
+          
+          Lienzo.Canvas.Pen.Color := clBlack;
+          Lienzo.Canvas.pen.Width := 3;
+
+          Lienzo.Canvas.MoveTo(xa,ya);
+          Lienzo.Canvas.lineto(xb,yb);
+
+          ListaCables[NumCable+1][1] := Point(xa,ya);
+          ListaCables[NumCable+1][2] := Point(xb,yb);
+          NumCable := NumCable + 1;
+          //Default
+          Lienzo.Canvas.Pen.Color := clblack;
+          Lienzo.Canvas.pen.Width := 1;
+        end;
+        if(CompareText(tipo,'w') = 0) then
+        begin
+          readln(f,xa);
+          readln(f,ya);
+          
+          //Pinta
+          Lienzo.Canvas.Draw(xa,ya,Firewall);
+          //Guardar
+          conW.CordX := xa;
+          conW.CordY := ya;
+          ListaFirewalls[NumFirewall+1] := conW;
+          NumFirewall := NumFirewall +1;
+        end;
+        if(CompareText(tipo,'s') = 0) then
+        begin
+          readln(f,xa);
+          readln(f,ya);
+          
+          Lienzo.Canvas.Draw(xa,ya,Server);
+          //Guardar
+          conS.CordX := xa;
+          conS.CordY := ya;
+          ListaServers[NumServer+1] := conS;
+          NumServer := NumServer +1;
+        end;
+        if(CompareText(tipo,'h') = 0) then
+        begin
+          readln(f,xa);
+          readln(f,ya);
+          
+          Lienzo.Canvas.Draw(xa,ya,Switch);
+          //Guardar
+          conH.CordX := xa;
+          conH.CordY := ya;
+          ListaSwitchs[NumSwitch+1] := conH;
+          NumSwitch := NumSwitch + 1;
+        end;
+        if(CompareText(tipo,'p') = 0) then
+        begin
+          readln(f,xa);
+          readln(f,ya);
+          readln(f,yb);//Angulo
+          
+          if yb = 0 then
+          begin
+            Computadora.LoadFromFile('PCIcon.bmp');
+            conP.angulo := 0;
+          end;
+          if yb = 90 then
+          begin
+            Computadora.LoadFromFile('PCIcon90.bmp');
+            conP.angulo := 90;
+          end;
+          if yb = 180 then
+          begin
+            Computadora.LoadFromFile('PCIcon180.bmp');
+            conP.angulo := 180;
+          end;
+          if yb = 270 then
+          begin
+            Computadora.LoadFromFile('PCIcon270.bmp');
+            conP.angulo := 270;
+          end;
+          //Pinta
+          Lienzo.Canvas.Draw(xa,ya,Computadora);
+          //Guardar
+          conP.CordX := xa;
+          conP.CordY := ya;
+          ListaPcs[NumPc+1] := conP;
+          NumPc := NumPc + 1;
+        end;
+        if(CompareText(tipo,'i') = 0) then
+        begin
+          readln(f,xa);
+          readln(f,ya);
+          readln(f,yb);//Angulo
+          
+          if yb = 0 then
+          begin
+            Impresora.LoadFromFile('PrinterIcon.bmp');
+            conI.angulo := 0;
+          end;
+          if yb = 90 then
+          begin
+            Impresora.LoadFromFile('PrinterIcon90.bmp');
+            conI.angulo := 90;
+          end;
+          if yb = 180 then
+          begin
+            Impresora.LoadFromFile('PrinterIcon180.bmp');
+            conI.angulo := 180;
+          end;
+          if yb = 270 then
+          begin
+            Impresora.LoadFromFile('PrinterIcon270.bmp');
+            conI.angulo := 270;
+          end;
+          Lienzo.Canvas.Draw(x1,y1,Impresora);
+          //Guardar
+          conI.CordX := x1;
+          conI.CordY := y1;
+          ListaImpre[NumImpre+1] := conI;
+          NumImpre := NumImpre + 1;
+        end;
+      end;
     end;
     CloseFile(f);//Cerrar El archivo
   end;
@@ -654,8 +860,8 @@ begin
   Lienzo.Canvas.MoveTo(x1,y1);
   Lienzo.Canvas.lineto(x2,y2);
 
-  ListaCables[NumCable][1] := Point(x1,y1);
-  ListaCables[NumCable][2] := Point(x2,y2);
+  ListaCables[NumCable+1][1] := Point(x1,y1);
+  ListaCables[NumCable+1][2] := Point(x2,y2);
   NumCable := NumCable + 1;
   //Default
   Lienzo.Canvas.Pen.Color := clblack;
@@ -663,11 +869,8 @@ begin
 end;
 
 procedure TEditorRedes.Button5Click(Sender: TObject);
-var Firewall : TBitmap;
 var contador : TFirewall;
 begin
-  Firewall := TBitmap.Create;
-  Firewall.LoadFromFile('FirewallIcon.bmp');
   if Lienzo.Cursor = crCross then
   begin
     //Pinta
@@ -675,7 +878,7 @@ begin
     //Guardar
     contador.CordX := x1;
     contador.CordY := y1;
-    ListaFirewalls[NumFirewall] := contador;
+    ListaFirewalls[NumFirewall+1] := contador;
     NumFirewall := NumFirewall +1;
 
   end;
@@ -712,45 +915,36 @@ begin
 end;
 
 procedure TEditorRedes.Button3Click(Sender: TObject);
-var Server : TBitmap;
 var contador : TServer;
 begin
-  Server := TBitmap.Create;
-  Server.LoadFromFile('ServerIcon.bmp');
   if Lienzo.Cursor = crCross then
   begin
     Lienzo.Canvas.Draw(x1,y1,Server);
     //Guardar
     contador.CordX := x1;
     contador.CordY := y1;
-    ListaServers[NumServer] := contador;
+    ListaServers[NumServer+1] := contador;
     NumServer := NumServer +1;
   end;
 end;
 
 procedure TEditorRedes.Button11Click(Sender: TObject);
-var Switch : TBitmap;
 var contador : TSwitch;
 begin
-  Switch := TBitmap.Create;
-  Switch.LoadFromFile('SwitchIcon.bmp');
   if Lienzo.Cursor = crCross then
   begin
     Lienzo.Canvas.Draw(x1,y1,Switch);
     //Guardar
     contador.CordX := x1;
     contador.CordY := y1;
-    ListaSwitchs[NumSwitch] := contador;
+    ListaSwitchs[NumSwitch+1] := contador;
     NumSwitch := NumSwitch + 1;
   end;
 end;
 
 procedure TEditorRedes.Button4Click(Sender: TObject);
-var Computadora : TBitmap;
 var contador : TPc;
 begin
-  Computadora := TBitmap.Create;
-
   if Lienzo.Cursor = crCross then
   begin
     if angulo = 0 then
@@ -777,16 +971,14 @@ begin
     //Guardar
     contador.CordX := x1;
     contador.CordY := y1;
-    ListaPcs[NumPc] := contador;
+    ListaPcs[NumPc+1] := contador;
     NumPc := NumPc + 1;
   end;
 end;
 
 procedure TEditorRedes.Button9Click(Sender: TObject);
-var Impresora : TBitmap;
 var contador : TPrinter;
 begin
-  Impresora := TBitmap.Create;
   if Lienzo.Cursor = crCross then
   begin
     if angulo = 0 then
@@ -813,7 +1005,7 @@ begin
     //Guardar
     contador.CordX := x1;
     contador.CordY := y1;
-    ListaImpre[NumImpre] := contador;
+    ListaImpre[NumImpre+1] := contador;
     NumImpre := NumImpre + 1;
   end;
 end;
