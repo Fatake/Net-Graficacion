@@ -1,6 +1,6 @@
 object EditorRedes: TEditorRedes
   Left = 146
-  Top = 98
+  Top = 106
   Width = 1324
   Height = 709
   Caption = 'EditorRedes'

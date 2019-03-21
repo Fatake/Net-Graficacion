@@ -223,10 +223,13 @@ begin
     end;
 
 end;
-
+//
+//Evento Mouse Up
+//
 procedure TEditorRedes.LienzoMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
-var delta,i : Integer;
+var delta: Integer;
+var i,j,k,a: Integer;
 //var aux1,aux2: Integer;
 begin
     //Calculo del punto 20 mas cercano
@@ -250,23 +253,26 @@ begin
     begin
       y2 := Y - delta;
     end;
+    //
     if Lienzo.Cursor = crCross then
     begin
       Edit2.Text := '('+IntToStr(x2)+','+IntToStr(y2)+')'
     end;
     //
-    //Elimina
+    //Eliminar
     //
     if Lienzo.Cursor = crNoDrop then
     begin
+      (*Pinta Maya*)
       Edit2.Text := 'Borra';
-
+      //Pinta un rectangulo pequeño donde se va a repitan la maya
       Lienzo.Canvas.Brush.Color := clWhite;
       Lienzo.Canvas.Pen.color := clWhite;
       Lienzo.Canvas.Rectangle(x1,y1,x2,y2);
+
       Lienzo.Canvas.Pen.color := clGray;
-      //Pinta un rectangulo pequeño donde se va a repitan la maya
-      //X
+
+      //Barras de X
       i := y1;
       while i <= y2 do
       begin
@@ -274,7 +280,7 @@ begin
         Lienzo.Canvas.LineTo(x2,i);
         i := i + 20;
       end;
-      //
+      //Barras de Y
       i := x1;
       while i <= x2 do
       begin
@@ -282,10 +288,163 @@ begin
         Lienzo.Canvas.LineTo(i,y2);
         i := i + 20;
       end;
-
-
+      //Default sets
       Lienzo.Canvas.Brush.Color := clWhite;
       Lienzo.Canvas.Pen.Color := clBlack;
+      //
+      (*Eliminar Objetos de ese rango*)
+      //
+      i := x1;
+      j := y1;
+      while i <= x2 do
+      begin
+        while j <= y2 do
+        begin
+          //Fibras
+          if NumFibra <> 0 then
+          begin
+            for k := 1  to NumFibra do
+            begin
+              if (ListaFibras[k][1].X = i) then
+              begin
+                if( ListaFibras[k][1].Y = j)then
+                begin
+                  for a := k to NumFibra-1 do
+                  begin
+                    ListaFibras[a] := ListaFibras[a+1];
+                  end;
+                  NumFibra := NumFibra - 1;
+                  Break;
+                end;
+              end;
+            end;
+          end;
+          //Fin Fibras
+          //Cables
+          if NumCable <> 0 then
+          begin
+            for k := 1  to NumCable do
+            begin
+              if (ListaCables[k][1].X = i) then
+              begin
+                if( ListaCables[k][1].Y = j)then
+                begin
+                  for a := k to NumCable-1 do
+                  begin
+                    ListaCables[a] := ListaCables[a+1];
+                  end;
+                  NumCable := NumCable - 1;
+                  Break;
+                end;
+              end;
+            end;
+          end;
+          //Fin Cables
+          //
+          //Firewalls
+          if NumFirewall <> 0 then
+          begin
+            for k := 1  to NumFirewall do
+            begin
+              if (ListaFirewalls[k].CordX = i) then
+              begin
+                if(ListaFirewalls[k].CordY = j)then
+                begin
+                  for a := k to NumFirewall-1 do
+                  begin
+                    ListaFirewalls[a] := ListaFirewalls[a+1];
+                  end;
+                  NumFirewall := NumFirewall - 1;
+                  Break;
+                end;
+              end;
+            end;
+          end;
+          //Fin Firewalls
+          //Servers
+          if NumServer <> 0 then
+          begin
+            for k := 1  to NumServer do
+            begin
+              if (ListaServers[k].CordX = i) then
+              begin
+                if(ListaServers[k].CordY = j)then
+                begin
+                  for a := k to NumServer-1 do
+                  begin
+                    ListaServers[a] := ListaServers[a+1];
+                  end;
+                  NumServer := NumServer - 1;
+                  Break;
+                end;
+              end;
+            end;
+          end;
+          //Fin Servers
+          //Switchs
+          if NumSwitch <> 0 then
+          begin
+            for k := 1  to NumSwitch do
+            begin
+              if (ListaSwitchs[k].CordX = i) then
+              begin
+                if(ListaSwitchs[k].CordY = j)then
+                begin
+                  for a := k to NumSwitch-1 do
+                  begin
+                    ListaSwitchs[a] := ListaSwitchs[a+1];
+                  end;
+                  NumSwitch := NumSwitch - 1;
+                  Break;
+                end;
+              end;
+            end;
+          end;
+          //Fin Switchs
+          //PCs
+          if NumPc <> 0 then
+          begin
+            for k := 1  to NumPc do
+            begin
+              if (ListaPcs[k].CordX = i) then
+              begin
+                if(ListaPcs[k].CordY = j)then
+                begin
+                  for a := k to NumSwitch-1 do
+                  begin
+                    ListaPcs[a] := ListaPcs[a+1];
+                  end;
+                  NumPc := NumPc - 1;
+                  Break;
+                end;
+              end;
+            end;
+          end;
+          //Fin Pcs
+          //Impresoras
+          if NumImpre <> 0 then
+          begin
+            for k := 1  to NumImpre do
+            begin
+              if (ListaImpre[k].CordX = i) then
+              begin
+                if(ListaImpre[k].CordY = j)then
+                begin
+                  for a := k to NumSwitch-1 do
+                  begin
+                    ListaImpre[a] := ListaImpre[a+1];
+                  end;
+                  NumImpre:= NumImpre - 1;
+                  Break;
+                end;
+              end;
+            end;
+          end;
+          //Fin Pcs
+          j := j + 20;
+        end;//2 While
+        i := i + 20;
+        end;//1 while
     end;
 end;
 
@@ -346,16 +505,127 @@ begin
 end;
 
 procedure TEditorRedes.Guardar1Click(Sender: TObject);
+var  f: TextFile;
+var i : Integer;
 begin
   //Guardar Archivo
   if(SaveDialog1.Execute) then
   begin
     coordenadasTexto.Text := SaveDialog1.FileName;
+    //Cargar arvhivos en Pascal
+    AssignFile(f,SaveDialog1.FileName);
+    //Fopen
+    Rewrite(f);//Forma de leectura
+    (*
+    Donde
+    n = no hay elementos de ese objeto
+    - = Siguientes datos
+    f = fibras
+    c = cables
+    w = Firewalls
+    s = server
+    h = Switch
+    p = Pc
+    i = impresora
+    a = angulo
+    *)
+
+    //Fibras
+    writeLn(f,'f' );
+    if NumFibra <> 0 then
+      for i := 1 to NumFibra do
+      begin
+        writeLn(f,ListaFibras[i][1].X);
+        writeLn(f,ListaFibras[i][1].Y);
+        writeLn(f,ListaFibras[i][2].X);
+        writeLn(f,ListaFibras[i][2].Y);
+        writeLn(f, '-');
+      end
+    else
+      writeLn(f, 'n');
+    //Cables
+    writeLn(f,'c' );
+    if NumCable <> 0 then
+      for i := 1 to NumCable do
+      begin
+        writeLn(f,ListaCables[i][1].X);
+        writeLn(f,ListaCables[i][1].Y);
+        writeLn(f,ListaCables[i][2].X);
+        writeLn(f,ListaCables[i][2].Y);
+        writeLn(f, '-');
+      end
+    else
+      writeLn(f, 'n');
+    //
+    //Firewalls
+    writeLn(f,'w' );
+    if NumFirewall <> 0 then
+      for i := 1 to NumFirewall do
+      begin
+        writeLn(f,ListaFirewalls[i].CordX);
+        writeLn(f,ListaFirewalls[i].CordY);
+        writeLn(f, '-');
+      end
+    else
+      writeLn(f, 'n');
+    //Servers
+    writeLn(f,'s' );
+    if NumServer <> 0 then
+      for i := 1 to NumServer do
+      begin
+        writeLn(f,ListaServers[i].CordX);
+        writeLn(f,ListaServers[i].CordY);
+        writeLn(f, '-');
+      end
+    else
+      writeLn(f, 'n');
+    //Switchs
+    writeLn(f,'h' );
+    if NumSwitch <> 0 then
+      for i := 1 to NumSwitch do
+      begin
+        writeLn(f,ListaSwitchs[i].CordX);
+        writeLn(f,ListaSwitchs[i].CordY);
+        writeLn(f, '-');
+      end
+    else
+      writeLn(f, 'n');
+    //Pcs
+    writeLn(f,'p' );
+    if NumPc <> 0 then
+      for i := 1 to NumPc do
+      begin
+        writeLn(f,ListaPcs[i].CordX);
+        writeLn(f,ListaPcs[i].CordY);
+        writeLn(f,'a');
+        writeLn(f,ListaPcs[i].angulo);
+        writeLn(f, '-');
+      end
+    else
+      writeLn(f, 'n');
+    //Impresoras
+    writeLn(f,'i' );
+    if NumImpre <> 0 then
+      for i := 1 to NumImpre do
+      begin
+        writeLn(f,ListaImpre[i].CordX);
+        writeLn(f,ListaImpre[i].CordY);
+        writeLn(f,'a');
+        writeLn(f,ListaImpre[i].angulo);
+        writeLn(f, '-');
+      end
+    else
+      writeLn(f, 'n');
+
+
+    //Cerrar El archivo
+    CloseFile(f);
   end;
 end;
 
 procedure TEditorRedes.Abrir1Click(Sender: TObject);
 var x,y: Integer;
+var  f: TextFile;
 begin
   //Abrir Archivo
   if(OpenDialog1.Execute) then
@@ -368,6 +638,8 @@ begin
     begin
       //inicio
       readln(f,x,y);//Lee lineas
+      Edit2.Text := IntToStr(x);
+      Edit1.Text := IntToStr(y);
     end;
     CloseFile(f);//Cerrar El archivo
   end;
